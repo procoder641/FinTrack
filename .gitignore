@@ -1,0 +1,25 @@
+# Maven
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# War file (generated)
+*.war
+
+# Environment / secrets (never commit passwords)
+src/main/resources/db.properties

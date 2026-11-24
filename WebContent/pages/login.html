@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Smart Expense Tracker — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050a0e;--surface:#0d1b2a;--surface2:#112240;
+  --accent:#00d4ff;--accent2:#7b2fff;--gold:#f5c842;
+  --text:#e8f4f8;--muted:#5a7a8a;--danger:#ff4757;
+  --success:#2ed573;--border:rgba(0,212,255,.15);
+  --glow:0 0 40px rgba(0,212,255,.25);
+}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+
+/* ── Animated background ── */
+.bg-canvas{position:fixed;inset:0;z-index:0;overflow:hidden}
+.bg-canvas::before{
+  content:'';position:absolute;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(123,47,255,.18) 0%,transparent 70%);
+  top:-200px;right:-200px;animation:pulse1 8s ease-in-out infinite;
+}
+.bg-canvas::after{
+  content:'';position:absolute;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(0,212,255,.12) 0%,transparent 70%);
+  bottom:-150px;left:-150px;animation:pulse2 10s ease-in-out infinite;
+}
+@keyframes pulse1{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+@keyframes pulse2{0%,100%{transform:scale(1.1)}50%{transform:scale(.9)}}
+
+.grid-lines{
+  position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,.04) 1px,transparent 1px);
+  background-size:50px 50px;
+}
+
+/* ── Layout ── */
+.page{position:relative;z-index:1;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center}
+
+/* ── Left hero ── */
+.hero{padding:4rem;display:flex;flex-direction:column;gap:2rem;animation:slideIn .8s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+.logo{display:flex;align-items:center;gap:.75rem}
+.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:12px;display:grid;place-items:center;font-size:1.3rem;box-shadow:var(--glow)}
+.logo-text{font-size:1.1rem;font-weight:700;letter-spacing:.05em;color:var(--accent)}
+.hero-headline{font-size:clamp(2rem,3.5vw,3rem);font-weight:800;line-height:1.1}
+.hero-headline span{background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);font-size:1rem;line-height:1.7;max-width:380px}
+.stat-row{display:flex;gap:2rem}
+.stat{display:flex;flex-direction:column;gap:.25rem}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:600;color:var(--accent)}
+.stat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+
+/* ── Right card ── */
+.card-wrap{display:flex;justify-content:center;align-items:center;padding:2rem;animation:fadeUp .8s .2s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;padding:2.5rem;width:100%;max-width:420px;
+  backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.5),var(--glow);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));
+}
+
+/* ── Tabs ── */
+.tabs{display:flex;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:2rem}
+.tab{flex:1;text-align:center;padding:.65rem;border-radius:9px;cursor:pointer;
+  font-size:.9rem;font-weight:600;transition:all .25s;color:var(--muted)}
+.tab.active{background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff;box-shadow:0 4px 16px rgba(0,212,255,.3)}
+
+/* ── Form ── */
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.form-input{
+  width:100%;padding:.85rem 1rem;background:var(--surface2);
+  border:1px solid var(--border);border-radius:12px;color:var(--text);
+  font-family:'Outfit',sans-serif;font-size:.95rem;transition:all .2s;outline:none;
+}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.12)}
+.form-input::placeholder{color:var(--muted)}
+
+.btn{
+  width:100%;padding:.9rem;border:none;border-radius:12px;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;
+  letter-spacing:.05em;transition:all .25s;position:relative;overflow:hidden;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,.4)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.divider{text-align:center;color:var(--muted);font-size:.8rem;margin:1.25rem 0;
+  position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;
+  width:40%;height:1px;background:var(--border)}
+.divider::before{left:0}.divider::after{right:0}
+
+.demo-btn{
+  width:100%;padding:.75rem;border:1px solid var(--border);border-radius:12px;
+  cursor:pointer;background:transparent;color:var(--muted);
+  font-family:'Outfit',sans-serif;font-size:.9rem;transition:all .2s;
+}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.alert{padding:.75rem 1rem;border-radius:10px;font-size:.875rem;
+  margin-bottom:1rem;display:none}
+.alert.error{background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.3);color:var(--danger)}
+.alert.success{background:rgba(46,213,115,.12);border:1px solid rgba(46,213,115,.3);color:var(--success)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .page{grid-template-columns:1fr}.hero{display:none}
+  .card-wrap{height:100vh}
+}
+</style>
+</head>
+<body>
+<div class="bg-canvas"></div>
+<div class="grid-lines"></div>
+
+<div class="page">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="logo">
+      <div class="logo-icon">💰</div>
+      <div class="logo-text">EXPENSE TRACKER</div>
+    </div>
+    <div>
+      <h1 class="hero-headline">Track Every<br/><span>Rupee Spent</span><br/>Intelligently</h1>
+    </div>
+    <p class="hero-sub">A full-stack expense management system with category-wise analytics, real-time dashboard, and complete CRUD operations — built with Java, JDBC &amp; MySQL.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Categories</span></div>
+      <div class="stat"><span class="stat-num">12mo</span><span class="stat-label">Trend Analysis</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Secure</span></div>
+    </div>
+  </div>
+
+  <!-- Auth Card -->
+  <div class="card-wrap">
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">Sign In</div>
+        <div class="tab" onclick="switchTab('register')">Register</div>
+      </div>
+
+      <div id="alert" class="alert"></div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="loginPass" placeholder="••••••••" required/>
+        </div>
+        <button class="btn" type="submit" id="loginBtn">Sign In →</button>
+        <div class="divider">or</div>
+        <button class="demo-btn" type="button" onclick="demoLogin()">Try Demo Account</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="regName" placeholder="Rohan Sharma" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="regEmail" placeholder="you@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="regPass" placeholder="min 6 characters" required minlength="6"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Budget (₹)</label>
+          <input class="form-input" type="number" id="regBudget" placeholder="25000" min="0"/>
+        </div>
+        <button class="btn" type="submit" id="regBtn">Create Account →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+let activeTab = 'login';
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('loginForm').style.display    = tab === 'login'    ? '' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
+  clearAlert();
+}
+
+function showAlert(msg, type='error') {
+  const el = document.getElementById('alert');
+  el.textContent = msg; el.className = `alert ${type}`; el.style.display = 'block';
+}
+function clearAlert() { document.getElementById('alert').style.display = 'none'; }
+
+async function handleLogin(e) {
+  e.preventDefault(); clearAlert();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const res = await fetch('/SmartExpenseTracker/api/auth?action=login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email: document.getElementById('loginEmail').value,
+                             password: document.getElementById('loginPass').value })
+    });
+    const data = await res.json();
+    if (data.success) { window.location.href = 'dashboard.html'; }
+    else showAlert(data.error || 'Invalid credentials');
+  } catch { showAlert('Network error. Ensure the server is running.'); }
+  finally { btn.disabled = false; btn.textContent = 'Sign In →'; }
+}
+
+async function handleRegister(e) {
+  e.preventDefault(); clearAlert();
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+  try {
+    const res = await fetch('/SmartExpenseTracker/api/auth?action=register', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPass').value,
+        budget: document.getElementById('regBudget').value || '0'
+      })
+    });
+    const data = await res.json();
+    if (data.success) { showAlert('Account created! Redirecting…','success'); setTimeout(()=>window.location.href='dashboard.html',1200); }
+    else showAlert(data.error || 'Registration failed');
+  } catch { showAlert('Network error'); }
+  finally { btn.disabled = false; btn.textContent = 'Create Account →'; }
+}
+
+function demoLogin() {
+  document.getElementById('loginEmail').value = 'demo@expense.com';
+  document.getElementById('loginPass').value  = 'demo1234';
+  document.getElementById('loginForm').dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dashboard — Smart Expense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050a0e;--surface:#0d1b2a;--surface2:#112240;--surface3:#162d4a;
+  --accent:#00d4ff;--accent2:#7b2fff;--gold:#f5c842;--green:#2ed573;
+  --red:#ff4757;--orange:#ffa502;
+  --text:#e8f4f8;--muted:#5a7a8a;--border:rgba(0,212,255,.12);
+  --sidebar:220px;--header:64px;
+}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--header) 1fr;height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{
+  grid-row:1/3;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:1.5rem 1rem;
+  position:relative;overflow:hidden;
+}
+.sidebar::before{
+  content:'';position:absolute;bottom:-80px;left:-80px;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(123,47,255,.15) 0%,transparent 70%);pointer-events:none;
+}
+.brand{display:flex;align-items:center;gap:.75rem;padding:.5rem .5rem 1.5rem}
+.brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:10px;display:grid;place-items:center;font-size:1.1rem}
+.brand-name{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:.05em}
+
+.nav{display:flex;flex-direction:column;gap:.25rem}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;padding:.75rem .85rem;
+  border-radius:11px;cursor:pointer;transition:all .2s;color:var(--muted);
+  text-decoration:none;font-size:.9rem;font-weight:500;
+}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(123,47,255,.25),rgba(0,212,255,.15));
+  color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+.nav-item span{font-size:1rem}
+
+.sidebar-footer{margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:.75rem;padding:.75rem}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));
+  display:grid;place-items:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.user-info{min-width:0}
+.user-name{font-size:.875rem;font-weight:600;truncate:ellipsis;overflow:hidden;white-space:nowrap}
+.user-email{font-size:.7rem;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.logout-btn{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;
+  border-radius:9px;cursor:pointer;color:var(--muted);font-size:.85rem;
+  transition:all .2s;border:none;background:none;font-family:'Outfit',sans-serif;width:100%}
+.logout-btn:hover{color:var(--red);background:rgba(255,71,87,.08)}
+
+/* ── Header ── */
+.header{
+  background:rgba(13,27,42,.8);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;
+  position:sticky;top:0;z-index:10;
+}
+.page-title{font-size:1.1rem;font-weight:700}
+.header-right{display:flex;align-items:center;gap:1rem}
+.month-picker{
+  background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);padding:.45rem .8rem;font-family:'Outfit',sans-serif;font-size:.875rem;
+  cursor:pointer;outline:none;transition:border-color .2s;
+}
+.month-picker:focus{border-color:var(--accent)}
+.search-box{
+  background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);padding:.45rem .8rem .45rem 2.2rem;font-family:'Outfit',sans-serif;
+  font-size:.875rem;outline:none;width:200px;transition:all .2s;
+}
+.search-box:focus{border-color:var(--accent);width:250px}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+
+/* ── Main content ── */
+.main{overflow-y:auto;padding:2rem;display:flex;flex-direction:column;gap:1.75rem}
+
+/* ── KPI cards ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:1.4rem;position:relative;overflow:hidden;transition:transform .2s;cursor:default;
+}
+.kpi:hover{transform:translateY(-3px)}
+.kpi::before{content:'';position:absolute;top:-30px;right:-30px;width:80px;height:80px;
+  border-radius:50%;opacity:.15}
+.kpi.blue::before{background:var(--accent)}.kpi.purple::before{background:var(--accent2)}
+.kpi.green::before{background:var(--green)}.kpi.orange::before{background:var(--orange)}
+.kpi-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.5rem}
+.kpi-value{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:600;margin-bottom:.3rem}
+.kpi-value.blue{color:var(--accent)}.kpi-value.purple{color:var(--accent2)}
+.kpi-value.green{color:var(--green)}.kpi-value.red{color:var(--red)}.kpi-value.orange{color:var(--orange)}
+.kpi-sub{font-size:.75rem;color:var(--muted)}
+
+/* ── Charts row ── */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.chart-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;
+}
+.chart-title{font-size:.875rem;font-weight:700;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:.5rem}
+.chart-title::before{content:'';width:3px;height:16px;background:linear-gradient(var(--accent2),var(--accent));border-radius:2px}
+.chart-wrap{position:relative;height:240px}
+
+/* ── Category summary ── */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.875rem}
+.cat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1.1rem;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;
+}
+.cat-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.3)}
+.cat-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-amount{font-family:'JetBrains Mono',monospace;font-size:1.15rem;font-weight:600;margin-bottom:.5rem}
+.cat-bar-wrap{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.cat-bar{height:100%;border-radius:2px;transition:width .6s ease}
+.cat-footer{display:flex;justify-content:space-between;margin-top:.4rem}
+.cat-txn{font-size:.7rem;color:var(--muted)}.cat-budget{font-size:.7rem;color:var(--muted)}
+.cat-over{color:var(--red)!important}
+
+/* ── Recent expenses ── */
+.expense-table{width:100%;border-collapse:collapse}
+.expense-table th{
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);
+  text-align:left;padding:.6rem 1rem;border-bottom:1px solid var(--border);
+}
+.expense-table td{padding:.8rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.875rem;vertical-align:middle}
+.expense-table tr:hover td{background:rgba(0,212,255,.04)}
+.exp-title{font-weight:600}
+.exp-cat{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;
+  background:rgba(255,255,255,.06);border-radius:6px;padding:.2rem .6rem}
+.amount-cell{font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:600}
+.badge{display:inline-block;padding:.15rem .55rem;border-radius:6px;font-size:.7rem;font-weight:600;text-transform:capitalize}
+.badge-cash{background:rgba(245,200,66,.12);color:var(--gold)}
+.badge-card{background:rgba(0,212,255,.12);color:var(--accent)}
+.badge-upi{background:rgba(46,213,115,.12);color:var(--green)}
+.badge-netbanking{background:rgba(123,47,255,.12);color:var(--accent2)}
+.badge-other{background:rgba(90,122,138,.12);color:var(--muted)}
+
+/* ── Empty / loading ── */
+.empty{text-align:center;padding:3rem;color:var(--muted)}
+.spinner{width:32px;height:32px;border:3px solid var(--surface2);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:2rem auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Budget progress bar ── */
+.budget-bar-wrap{margin:.75rem 0}
+.budget-bar-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.budget-bar-fill{height:100%;border-radius:4px;transition:width .8s ease;
+  background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.budget-bar-fill.warn{background:linear-gradient(90deg,var(--orange),var(--gold))}
+.budget-bar-fill.over{background:linear-gradient(90deg,var(--red),#ff6b7a)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">💰</div>
+      <div class="brand-name">EXPENSE TRACKER</div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item active" href="dashboard.html"><span>📊</span> Dashboard</a>
+      <a class="nav-item" href="expenses.html"><span>📝</span> Expenses</a>
+      <a class="nav-item" href="categories.html"><span>🏷️</span> Categories</a>
+      <a class="nav-item" href="analytics.html"><span>📈</span> Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar" id="sideAvatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="sideUserName">Loading…</div>
+          <div class="user-email" id="sideEmail">—</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">⇠ Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="page-title">Dashboard</div>
+    <div class="header-right">
+      <input type="month" class="month-picker" id="monthPicker"/>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-box" id="searchBox" placeholder="Search expenses…" oninput="liveSearch(this.value)"/>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main" id="mainContent">
+    <div class="spinner" id="loadSpinner"></div>
+  </main>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let currentUser  = null;
+let allExpenses  = [];
+let categories   = [];
+let trendChart   = null;
+let donutChart   = null;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+(async function init() {
+  // Auth check
+  const auth = await api('/api/auth?action=me');
+  if (!auth.auth) { window.location.href = 'login.html'; return; }
+  currentUser = auth;
+
+  // Set month picker to current month
+  const now = new Date();
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('monthPicker').value = monthStr;
+  document.getElementById('monthPicker').addEventListener('change', loadDashboard);
+
+  // Sidebar
+  document.getElementById('sideUserName').textContent = auth.name;
+  document.getElementById('sideEmail').textContent    = auth.email;
+  document.getElementById('sideAvatar').textContent   = auth.name[0].toUpperCase();
+
+  await loadDashboard();
+})();
+
+async function loadDashboard() {
+  const [year, month] = document.getElementById('monthPicker').value.split('-');
+  document.getElementById('loadSpinner').style.display = 'block';
+  document.getElementById('mainContent').innerHTML = '<div class="spinner"></div>';
+
+  const [overview, summary, trend, expenses] = await Promise.all([
+    api(`/api/analytics?type=overview&year=${year}&month=${month}`),
+    api(`/api/analytics?type=summary&year=${year}&month=${month}`),
+    api(`/api/analytics?type=trend`),
+    api(`/api/expenses?month=${year}-${month}`)
+  ]);
+
+  allExpenses = Array.isArray(expenses) ? expenses : [];
+  categories  = Array.isArray(summary)  ? summary  : [];
+
+  renderDashboard(overview, summary, trend, allExpenses);
+}
+
+function renderDashboard(ov, cats, trend, expenses) {
+  const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+  const pct = ov.percentUsed || 0;
+
+  document.getElementById('mainContent').innerHTML = `
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi blue">
+        <div class="kpi-label">Month Spent</div>
+        <div class="kpi-value blue">${fmt(ov.monthlyTotal)}</div>
+        <div class="kpi-sub">${pct}% of budget used</div>
+      </div>
+      <div class="kpi purple">
+        <div class="kpi-label">Monthly Budget</div>
+        <div class="kpi-value purple">${fmt(ov.monthlyBudget)}</div>
+        <div class="budget-bar-wrap">
+          <div class="budget-bar-track"><div class="budget-bar-fill ${pct>100?'over':pct>75?'warn':''}" style="width:${Math.min(pct,100)}%"></div></div>
+        </div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-label">Remaining</div>
+        <div class="kpi-value ${ov.remaining<0?'red':'green'}">${fmt(ov.remaining)}</div>
+        <div class="kpi-sub">${ov.remaining<0?'⚠ Over budget':'On track'}</div>
+      </div>
+      <div class="kpi orange">
+        <div class="kpi-label">Transactions</div>
+        <div class="kpi-value orange">${expenses.length}</div>
+        <div class="kpi-sub">this month</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">12-Month Spending Trend</div>
+        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Category Breakdown</div>
+        <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Category Cards -->
+    <div>
+      <div class="chart-title" style="margin-bottom:1rem">Category Summary</div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <!-- Recent Expenses -->
+    <div class="chart-card">
+      <div class="chart-title">Recent Expenses</div>
+      <div id="expTable"></div>
+    </div>
+  `;
+
+  renderTrendChart(trend);
+  renderDonut(cats);
+  renderCategoryCards(cats);
+  renderExpenseTable(expenses.slice(0, 15));
+}
+
+function renderTrendChart(trend) {
+  const ctx = document.getElementById('trendChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: trend.labels || [],
+      datasets:[{
+        label:'Spending',
+        data: trend.values || [],
+        borderColor:'#00d4ff',
+        backgroundColor:'rgba(0,212,255,.08)',
+        fill:true,borderWidth:2,tension:.4,
+        pointBackgroundColor:'#00d4ff',pointRadius:4,pointHoverRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>'₹'+Number(v.raw).toLocaleString('en-IN')}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#5a7a8a',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#5a7a8a',font:{size:10},callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}
+      }
+    }
+  });
+}
+
+function renderDonut(cats) {
+  const ctx = document.getElementById('donutChart');
+  if (!ctx) return;
+  const active = cats.filter(c => Number(c.totalSpent||0) > 0);
+  if (!active.length) return;
+  new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels: active.map(c=>c.name),
+      datasets:[{data:active.map(c=>Number(c.totalSpent)),backgroundColor:active.map(c=>c.color),borderWidth:0,hoverOffset:8}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{position:'right',labels:{color:'#e8f4f8',font:{size:11},boxWidth:12,padding:14}},
+        tooltip:{callbacks:{label:v=>`${v.label}: ₹${Number(v.raw).toLocaleString('en-IN')}`}}}
+    }
+  });
+}
+
+function renderCategoryCards(cats) {
+  const fmt = n => '₹'+Number(n||0).toLocaleString('en-IN');
+  const grid = document.getElementById('catGrid');
+  if (!grid) return;
+  grid.innerHTML = cats.map(c => {
+    const spent = Number(c.totalSpent||0);
+    const limit = Number(c.budgetLimit||0);
+    const pct   = limit > 0 ? Math.min(100, (spent/limit)*100) : 0;
+    const over  = limit > 0 && spent > limit;
+    return `<div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-dot" style="background:${c.color}"></div>
+        <div class="cat-name">${c.name}</div>
+      </div>
+      <div class="cat-amount" style="color:${c.color}">${fmt(spent)}</div>
+      ${limit > 0 ? `
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width:${pct}%;background:${c.color}${over?';background:#ff4757':''}"></div></div>
+        <div class="cat-footer">
+          <span class="cat-txn">${c.txnCount||0} txns</span>
+          <span class="cat-budget ${over?'cat-over':''}">of ${fmt(limit)}</span>
+        </div>` : `<div class="cat-txn">${c.txnCount||0} transactions</div>`}
+    </div>`;
+  }).join('');
+}
+
+function renderExpenseTable(expenses) {
+  const wrap = document.getElementById('expTable');
+  if (!wrap) return;
+  if (!expenses.length) { wrap.innerHTML = '<div class="empty">No expenses this month</div>'; return; }
+  wrap.innerHTML = `<table class="expense-table">
+    <thead><tr>
+      <th>Title</th><th>Category</th><th>Date</th><th>Mode</th><th>Amount</th>
+    </tr></thead>
+    <tbody>${expenses.map(e=>`<tr>
+      <td class="exp-title">${e.title}</td>
+      <td><span class="exp-cat"><span style="width:8px;height:8px;border-radius:50%;background:${e.categoryColor||'#888'};display:inline-block"></span>${e.categoryName||'—'}</span></td>
+      <td style="color:var(--muted)">${formatDate(e.expenseDate)}</td>
+      <td><span class="badge badge-${e.paymentMode}">${e.paymentMode}</span></td>
+      <td class="amount-cell">−₹${Number(e.amount).toLocaleString('en-IN')}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+async function liveSearch(q) {
+  if (!q.trim()) { loadDashboard(); return; }
+  const res = await api(`/api/expenses?q=${encodeURIComponent(q)}`);
+  if (Array.isArray(res)) {
+    document.getElementById('expTable').innerHTML = '';
+    renderExpenseTable(res);
+  }
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+async function api(url) {
+  try {
+    const r = await fetch('/SmartExpenseTracker' + url);
+    return await r.json();
+  } catch { return {}; }
+}
+
+async function logout() {
+  await api('/api/auth?action=logout');
+  window.location.href = 'login.html';
+}
+// Override logout to POST
+async function logout() {
+  try { await fetch('/SmartExpenseTracker/api/auth?action=logout',{method:'POST'}); } catch{}
+  window.location.href = 'login.html';
+}
+</script>
+</body>
+</html>

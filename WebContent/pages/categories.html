@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Categories — Smart Expense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050a0e;--surface:#0d1b2a;--surface2:#112240;--surface3:#162d4a;
+  --accent:#00d4ff;--accent2:#7b2fff;--green:#2ed573;--red:#ff4757;
+  --gold:#f5c842;--text:#e8f4f8;--muted:#5a7a8a;--border:rgba(0,212,255,.12);
+  --sidebar:220px;--header:64px;
+}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--header) 1fr;height:100vh}
+.sidebar{grid-row:1/3;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;bottom:-80px;left:-80px;width:200px;height:200px;background:radial-gradient(circle,rgba(123,47,255,.15) 0%,transparent 70%);pointer-events:none}
+.brand{display:flex;align-items:center;gap:.75rem;padding:.5rem .5rem 1.5rem}
+.brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:grid;place-items:center;font-size:1.1rem}
+.brand-name{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:.05em}
+.nav{display:flex;flex-direction:column;gap:.25rem}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem .85rem;border-radius:11px;cursor:pointer;transition:all .2s;color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(123,47,255,.25),rgba(0,212,255,.15));color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+.sidebar-footer{margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:.75rem;padding:.75rem}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.user-name{font-size:.875rem;font-weight:600}.user-email{font-size:.7rem;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.logout-btn{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;border-radius:9px;cursor:pointer;color:var(--muted);font-size:.85rem;transition:all .2s;border:none;background:none;font-family:'Outfit',sans-serif;width:100%}
+.logout-btn:hover{color:var(--red);background:rgba(255,71,87,.08)}
+.header{background:rgba(13,27,42,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:10}
+.page-title{font-size:1.1rem;font-weight:700}
+.add-btn{background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;color:#fff;padding:.5rem 1.1rem;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.875rem;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+.add-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.35)}
+.main{overflow-y:auto;padding:2rem;display:flex;flex-direction:column;gap:1.5rem}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.4rem;
+  transition:all .25s;position:relative;overflow:hidden;cursor:default}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.cat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
+.cat-icon-wrap{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;flex-shrink:0}
+.cat-actions{display:flex;gap:.35rem}
+.icon-btn{width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;display:grid;place-items:center;font-size:.85rem;transition:all .2s;background:transparent;color:var(--muted)}
+.icon-btn:hover{background:var(--surface2);color:var(--text)}
+.icon-btn.del:hover{background:rgba(255,71,87,.12);color:var(--red)}
+.cat-name{font-size:1rem;font-weight:700;margin-bottom:.3rem}
+.cat-budget{font-size:.78rem;color:var(--muted)}
+.cat-budget span{font-family:'JetBrains Mono',monospace;color:var(--gold)}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;width:100%;max-width:440px;position:relative;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:20px 20px 0 0}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem}
+.modal-title{font-size:1.1rem;font-weight:700}
+.close-btn{width:30px;height:30px;border-radius:8px;border:none;background:var(--surface2);color:var(--muted);cursor:pointer;font-size:1rem;display:grid;place-items:center;transition:all .2s}
+.close-btn:hover{background:var(--surface3);color:var(--text)}
+.form-group{margin-bottom:1.1rem}
+.form-label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem}
+.form-input{width:100%;padding:.8rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:11px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;transition:all .2s;outline:none}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.form-input::placeholder{color:var(--muted)}
+.color-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.4rem}
+.color-swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.color-swatch.selected{border-color:#fff;transform:scale(1.15)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.modal-footer{display:flex;gap:.75rem;margin-top:.5rem}
+.btn-primary{flex:1;padding:.85rem;border:none;border-radius:12px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;transition:all .2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.35)}
+.btn-secondary{padding:.85rem 1.5rem;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.95rem;background:transparent;color:var(--muted);transition:all .2s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--text)}
+
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.85rem 1.4rem;border-radius:12px;font-size:.875rem;font-weight:600;z-index:200;animation:toastIn .3s ease;display:none;align-items:center;gap:.6rem}
+.toast.show{display:flex}
+.toast.success{background:rgba(46,213,115,.15);border:1px solid rgba(46,213,115,.4);color:var(--green)}
+.toast.error{background:rgba(255,71,87,.15);border:1px solid rgba(255,71,87,.4);color:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.spinner{width:28px;height:28px;border:3px solid var(--surface2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:2rem auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-icon">💰</div><div class="brand-name">EXPENSE TRACKER</div></div>
+    <nav class="nav">
+      <a class="nav-item" href="dashboard.html"><span>📊</span> Dashboard</a>
+      <a class="nav-item" href="expenses.html"><span>📝</span> Expenses</a>
+      <a class="nav-item active" href="categories.html"><span>🏷️</span> Categories</a>
+      <a class="nav-item" href="analytics.html"><span>📈</span> Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip"><div class="avatar" id="sideAvatar">U</div>
+        <div><div class="user-name" id="sideUserName">—</div><div class="user-email" id="sideEmail">—</div></div></div>
+      <button class="logout-btn" onclick="logout()">⇠ Sign Out</button>
+    </div>
+  </aside>
+  <header class="header">
+    <div class="page-title">Categories</div>
+    <button class="add-btn" onclick="openModal()">＋ New Category</button>
+  </header>
+  <main class="main">
+    <div class="cat-grid" id="catGrid"><div class="spinner"></div></div>
+  </main>
+</div>
+
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">New Category</div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <form id="catForm" onsubmit="saveCategory(event)">
+      <input type="hidden" id="editId"/>
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" id="fName" placeholder="e.g. Food & Dining" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <div class="color-row" id="colorRow"></div>
+        <input type="hidden" id="fColor" value="#FF6B6B"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Icon (emoji)</label>
+          <input class="form-input" id="fIcon" placeholder="🍔" maxlength="4"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Budget Limit (₹)</label>
+          <input class="form-input" id="fBudget" type="number" min="0" placeholder="optional"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" id="saveBtn">Save Category</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = ['#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD','#98D8C8','#F7DC6F','#BB8FCE','#85C1E9','#82E0AA','#F0B27A','#00d4ff','#7b2fff','#2ed573','#ffa502'];
+
+// Build color swatches
+const cr = document.getElementById('colorRow');
+COLORS.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'color-swatch' + (c==='#FF6B6B'?' selected':'');
+  d.style.background = c; d.dataset.color = c;
+  d.onclick = () => { document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected')); d.classList.add('selected'); document.getElementById('fColor').value = c; };
+  cr.appendChild(d);
+});
+
+let categories = [];
+
+(async function() {
+  const auth = await api('/api/auth?action=me');
+  if (!auth.auth) { window.location.href='login.html'; return; }
+  document.getElementById('sideUserName').textContent = auth.name;
+  document.getElementById('sideEmail').textContent    = auth.email;
+  document.getElementById('sideAvatar').textContent   = auth.name[0];
+  await loadCategories();
+})();
+
+async function loadCategories() {
+  categories = await api('/api/categories') || [];
+  renderCats();
+}
+
+function renderCats() {
+  const g = document.getElementById('catGrid');
+  if (!categories.length) { g.innerHTML='<div style="color:var(--muted);padding:2rem">No categories yet. Add one!</div>'; return; }
+  g.innerHTML = categories.map(c => `
+    <div class="cat-card" style="--cc:${c.colorHex}">
+      <style>.cat-card[style*="${c.colorHex}"]::before{background:${c.colorHex}}</style>
+      <div class="cat-top">
+        <div class="cat-icon-wrap" style="background:${c.colorHex}22;color:${c.colorHex}">${c.icon||'🏷️'}</div>
+        <div class="cat-actions">
+          <button class="icon-btn" onclick='editCat(${JSON.stringify(c)})' title="Edit">✏️</button>
+          <button class="icon-btn del" onclick="deleteCat(${c.id})" title="Delete">🗑️</button>
+        </div>
+      </div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-budget">Budget: <span>${c.budgetLimit ? '₹'+Number(c.budgetLimit).toLocaleString('en-IN') : 'Not set'}</span></div>
+    </div>`).join('');
+}
+
+function openModal(editing=false) {
+  document.getElementById('modalTitle').textContent = editing ? 'Edit Category' : 'New Category';
+  document.getElementById('saveBtn').textContent    = editing ? 'Update' : 'Save Category';
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('catForm').reset();
+  document.getElementById('editId').value = '';
+  document.querySelectorAll('.color-swatch').forEach((s,i)=>s.classList.toggle('selected',i===0));
+  document.getElementById('fColor').value = COLORS[0];
+}
+function editCat(c) {
+  document.getElementById('editId').value = c.id;
+  document.getElementById('fName').value   = c.name;
+  document.getElementById('fIcon').value   = c.icon||'';
+  document.getElementById('fBudget').value = c.budgetLimit||'';
+  document.getElementById('fColor').value  = c.colorHex;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color===c.colorHex));
+  openModal(true);
+}
+async function saveCategory(e) {
+  e.preventDefault();
+  const id = document.getElementById('editId').value;
+  const body = { name:document.getElementById('fName').value, colorHex:document.getElementById('fColor').value,
+    icon:document.getElementById('fIcon').value||'tag', budgetLimit:document.getElementById('fBudget').value||null };
+  if (id) body.id = parseInt(id);
+  const res = await fetch('/SmartExpenseTracker/api/categories', {
+    method: id ? 'PUT':'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const data = await res.json();
+  if (data.success) { showToast(id?'Category updated!':'Category created!','success'); closeModal(); loadCategories(); }
+  else showToast(data.error||'Failed','error');
+}
+async function deleteCat(id) {
+  if (!confirm('Delete this category? Make sure no expenses are linked.')) return;
+  const res = await fetch(`/SmartExpenseTracker/api/categories?id=${id}`,{method:'DELETE'});
+  const data = await res.json();
+  if (data.success) { showToast('Deleted','success'); loadCategories(); }
+  else showToast(data.error||'Cannot delete — expenses may be linked','error');
+}
+
+let tt;
+function showToast(msg,type='success'){const el=document.getElementById('toast');el.textContent=(type==='success'?'✓ ':'✗ ')+msg;el.className=`toast ${type} show`;clearTimeout(tt);tt=setTimeout(()=>el.className='toast',3000)}
+async function api(url){try{return await(await fetch('/SmartExpenseTracker'+url)).json()}catch{return{}}}
+async function logout(){try{await fetch('/SmartExpenseTracker/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'}
+</script>
+</body>
+</html>
