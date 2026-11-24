@@ -225,7 +225,7 @@
                                password: document.getElementById('loginPass').value })
       });
       const data = await res.json();
-      if (data.success) { window.location.href = 'dashboard.html'; }
+      if (data.success) { window.location.href = '/pages/dashboard.html'; }
       else showAlert(data.error || 'Invalid credentials');
     } catch { showAlert('Network error. Ensure the server is running.'); }
     finally { btn.disabled = false; btn.textContent = 'Sign In →'; }
@@ -246,7 +246,7 @@
         })
       });
       const data = await res.json();
-      if (data.success) { showAlert('Account created! Redirecting…','success'); setTimeout(()=>window.location.href='dashboard.html',1200); }
+      if (data.success) { showAlert('Account created! Redirecting…','success'); setTimeout(()=>window.location.href='/pages/dashboard.html',1200); }
       else showAlert(data.error || 'Registration failed');
     } catch { showAlert('Network error'); }
     finally { btn.disabled = false; btn.textContent = 'Create Account →'; }
