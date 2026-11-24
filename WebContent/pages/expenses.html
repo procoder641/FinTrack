@@ -141,10 +141,38 @@ html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color
 .toast.success{background:rgba(46,213,115,.15);border:1px solid rgba(46,213,115,.4);color:var(--green)}
 .toast.error{background:rgba(255,71,87,.15);border:1px solid rgba(255,71,87,.4);color:var(--red)}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── Mobile ── */
+.menu-btn{display:none;background:none;border:0;color:var(--text);font-size:1.6rem;cursor:pointer;line-height:1}
+.header-left{display:flex;align-items:center;gap:.75rem}
+.menu-overlay{display:none}
+
+@media(max-width:768px){
+  .app{grid-template-columns:1fr;height:100dvh}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;z-index:90;
+    transform:translateX(-100%);transition:transform .3s}
+  .sidebar.open{transform:translateX(0)}
+  .menu-overlay.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80}
+  .menu-btn{display:block}
+  .header{padding:0 .75rem}
+  .page-title{font-size:1rem}
+  .search-wrap{display:none}
+  .add-text{display:none}
+  .add-btn{padding:.5rem .9rem;font-size:1rem}
+  .main{padding:1rem}
+  .summary-bar{grid-template-columns:1fr}
+  #tableWrap{overflow-x:auto}
+  .exp-table{min-width:640px}
+  .pagination{flex-direction:column;gap:.75rem}
+  .modal{padding:1.25rem}
+  .form-row{grid-template-columns:1fr}
+  .overlay{padding:1rem}
+}
 </style>
 </head>
 <body>
 <div class="app">
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="brand"><div class="brand-icon">💰</div><div class="brand-name">EXPENSE TRACKER</div></div>
@@ -164,12 +192,15 @@ html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color
 
   <!-- Header -->
   <header class="header">
-    <div class="page-title">Expenses</div>
+    <div class="header-left">
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      <div class="page-title">Expenses</div>
+    </div>
     <div class="header-right">
       <input type="month" class="month-picker" id="monthPicker"/>
       <div class="search-wrap"><span class="search-icon">🔍</span>
         <input class="search-box" id="searchBox" placeholder="Search…" oninput="handleSearch(this.value)"/></div>
-      <button class="add-btn" onclick="openModal()">＋ Add Expense</button>
+      <button class="add-btn" onclick="openModal()">＋<span class="add-text"> Add Expense</span></button>
     </div>
   </header>
 
@@ -433,6 +464,10 @@ function showToast(msg, type='success') {
 }
 async function api(url) { try { return await (await fetch(url)).json(); } catch { return {}; } }
 async function logout() { try{await fetch('/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
+  function toggleMenu() {
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('menuOverlay').classList.toggle('show');
+}
 </script>
 </body>
 </html>
