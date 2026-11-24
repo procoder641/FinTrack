@@ -15,7 +15,7 @@
       --success:#2ed573;--border:rgba(0,212,255,.15);
       --glow:0 0 40px rgba(0,212,255,.25);
     }
-    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+    html,body{min-height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
 
     /* ── Animated background ── */
     .bg-canvas{position:fixed;inset:0;z-index:0;overflow:hidden}
@@ -41,7 +41,7 @@
     }
 
     /* ── Layout ── */
-    .page{position:relative;z-index:1;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center}
+    .page{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;align-items:center}
 
     /* ── Left hero ── */
     .hero{padding:4rem;display:flex;flex-direction:column;gap:2rem;animation:slideIn .8s ease both}
@@ -122,9 +122,12 @@
 
     /* ── Responsive ── */
     @media(max-width:768px){
-      .page{grid-template-columns:1fr}.hero{display:none}
-      .card-wrap{height:100vh}
-    }
+  .page{grid-template-columns:1fr}
+  .hero{display:flex;padding:1.5rem 1.5rem 0}
+  .hero-headline,.hero-sub,.stat-row{display:none}
+  .card-wrap{padding:1rem;min-height:auto}
+  .card{padding:1.5rem}
+}
   </style>
 </head>
 <body>
