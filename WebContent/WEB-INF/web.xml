@@ -9,7 +9,7 @@
 
     <!-- ── Security: redirect / to login ───────────────────── -->
     <welcome-file-list>
-        <welcome-file>pages/login.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
     <!-- ── Session config ──────────────────────────────────── -->
