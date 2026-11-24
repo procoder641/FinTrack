@@ -6,20 +6,22 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * DBConnection — thin connection factory.
- * Replace with HikariCP / JNDI DataSource in production.
- */
 public class DBConnection {
 
-    private static final Logger LOG = Logger.getLogger(DBConnection.class.getName());
+    private static final Logger LOG =
+            Logger.getLogger(DBConnection.class.getName());
 
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String URL    =
-        "jdbc:mysql://localhost:3306/expense_tracker"
-      + "?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true";
-    private static final String USER   = "root";
-    private static final String PASS   = "Gtny@1234";   // ← change this
+    private static final String DRIVER =
+            "com.mysql.cj.jdbc.Driver";
+
+    private static final String URL =
+            System.getenv("DB_URL");
+
+    private static final String USER =
+            System.getenv("DB_USER");
+
+    private static final String PASS =
+            System.getenv("DB_PASSWORD");
 
     static {
         try {
@@ -32,16 +34,21 @@ public class DBConnection {
 
     private DBConnection() {}
 
-    /** Returns a new connection from the driver manager. */
     public static Connection getConnection() throws SQLException {
+        if (URL == null || USER == null || PASS == null) {
+            throw new SQLException("Database environment variables are missing.");
+        }
+
         return DriverManager.getConnection(URL, USER, PASS);
     }
 
-    /** Quietly closes a connection (null-safe). */
     public static void close(Connection conn) {
         if (conn != null) {
-            try { conn.close(); }
-            catch (SQLException e) { LOG.log(Level.WARNING, "Failed to close connection", e); }
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                LOG.log(Level.WARNING, "Failed to close connection", e);
+            }
         }
     }
 }
