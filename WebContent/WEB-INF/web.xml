@@ -21,13 +21,5 @@
     </session-config>
 
     <!-- ── Error pages ─────────────────────────────────────── -->
-    <error-page>
-        <error-code>404</error-code>
-        <location>/pages/login.html</location>
-    </error-page>
-    <error-page>
-        <error-code>500</error-code>
-        <location>/pages/login.html</location>
-    </error-page>
 
 </web-app>

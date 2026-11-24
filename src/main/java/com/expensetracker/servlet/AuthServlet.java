@@ -39,27 +39,31 @@ public class AuthServlet extends HttpServlet {
         {"Others",        "#B0B0B0", "more-horizontal"}
     };
 
+    private static final java.util.logging.Logger LOG =
+            java.util.logging.Logger.getLogger(AuthServlet.class.getName());
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        String action = req.getParameter("action");
-        String body   = req.getReader().lines().collect(Collectors.joining());
-        JSONObject json = body.isBlank() ? new JSONObject() : new JSONObject(body);
-
         try {
+            String action = req.getParameter("action");
+            String body   = req.getReader().lines().collect(Collectors.joining());
+            JSONObject json = body.isBlank() ? new JSONObject() : new JSONObject(body);
+
             switch (action == null ? "" : action) {
                 case "login"    -> handleLogin   (req, resp, json);
                 case "register" -> handleRegister(req, resp, json);
                 case "logout"   -> handleLogout  (req, resp);
                 default -> { resp.setStatus(400); resp.getWriter().print("{\"error\":\"Unknown action\"}"); }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            LOG.log(java.util.logging.Level.SEVERE, "AuthServlet failed", e);
             resp.setStatus(500);
-            resp.getWriter().print("{\"error\":\"" + e.getMessage() + "\"}");
+            String msg = String.valueOf(e).replace("\\", "\\\\").replace("\"", "'").replaceAll("[\\r\\n]+", " ");
+            resp.getWriter().print("{\"error\":\"" + msg + "\"}");
         }
     }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
