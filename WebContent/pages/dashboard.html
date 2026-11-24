@@ -428,7 +428,7 @@ function formatDate(d) {
 
 async function api(url) {
   try {
-    const r = await fetch('/SmartExpenseTracker' + url);
+    const r = await fetch(url);
     return await r.json();
   } catch { return {}; }
 }
@@ -439,7 +439,7 @@ async function logout() {
 }
 // Override logout to POST
 async function logout() {
-  try { await fetch('/SmartExpenseTracker/api/auth?action=logout',{method:'POST'}); } catch{}
+  try { await fetch('/api/auth?action=logout',{method:'POST'}); } catch{}
   window.location.href = 'login.html';
 }
 </script>

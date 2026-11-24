@@ -219,8 +219,8 @@ function render(cats, trend, ov) {
   }).join('');
 }
 
-async function api(url) { try { return await (await fetch('/SmartExpenseTracker'+url)).json(); } catch { return {}; } }
-async function logout() { try{await fetch('/SmartExpenseTracker/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
+async function api(url) { try { return await (await fetch(url)).json(); } catch { return {}; } }
+async function logout() { try{await fetch('/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
 </script>
 </body>
 </html>

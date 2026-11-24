@@ -4,11 +4,11 @@
 --  DB     : MySQL 8.0+
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS expense_tracker
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+ -- CREATE DATABASE IF NOT EXISTS expense_tracker
+  -- CHARACTER SET utf8mb4
+ -- COLLATE utf8mb4_unicode_ci;
 
-USE expense_tracker;
+-- USE expense_tracker;
 
 -- ────────────────────────────────────────────────────────────
 --  USERS

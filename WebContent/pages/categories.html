@@ -221,7 +221,7 @@ async function saveCategory(e) {
   const body = { name:document.getElementById('fName').value, colorHex:document.getElementById('fColor').value,
     icon:document.getElementById('fIcon').value||'tag', budgetLimit:document.getElementById('fBudget').value||null };
   if (id) body.id = parseInt(id);
-  const res = await fetch('/SmartExpenseTracker/api/categories', {
+  const res = await fetch('/api/categories', {
     method: id ? 'PUT':'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
   const data = await res.json();
   if (data.success) { showToast(id?'Category updated!':'Category created!','success'); closeModal(); loadCategories(); }
@@ -229,7 +229,7 @@ async function saveCategory(e) {
 }
 async function deleteCat(id) {
   if (!confirm('Delete this category? Make sure no expenses are linked.')) return;
-  const res = await fetch(`/SmartExpenseTracker/api/categories?id=${id}`,{method:'DELETE'});
+  const res = await fetch(`/api/categories?id=${id}`,{method:'DELETE'});
   const data = await res.json();
   if (data.success) { showToast('Deleted','success'); loadCategories(); }
   else showToast(data.error||'Cannot delete — expenses may be linked','error');
@@ -237,8 +237,8 @@ async function deleteCat(id) {
 
 let tt;
 function showToast(msg,type='success'){const el=document.getElementById('toast');el.textContent=(type==='success'?'✓ ':'✗ ')+msg;el.className=`toast ${type} show`;clearTimeout(tt);tt=setTimeout(()=>el.className='toast',3000)}
-async function api(url){try{return await(await fetch('/SmartExpenseTracker'+url)).json()}catch{return{}}}
-async function logout(){try{await fetch('/SmartExpenseTracker/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'}
+async function api(url){try{return await(await fetch(url)).json()}catch{return{}}}
+async function logout(){try{await fetch('/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'}
 </script>
 </body>
 </html>

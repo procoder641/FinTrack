@@ -394,7 +394,7 @@ async function saveExpense(event) {
   };
   if (id) body.id = parseInt(id);
 
-  const res = await fetch('/SmartExpenseTracker/api/expenses', {
+  const res = await fetch('/api/expenses', {
     method: id ? 'PUT' : 'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(body)
@@ -407,7 +407,7 @@ async function saveExpense(event) {
 }
 async function deleteExpense(id) {
   if (!confirm('Delete this expense?')) return;
-  const res = await fetch(`/SmartExpenseTracker/api/expenses?id=${id}`, {method:'DELETE'});
+  const res = await fetch(`/api/expenses?id=${id}`, {method:'DELETE'});
   const data = await res.json();
   if (data.success) { showToast('Expense deleted','success'); loadExpenses(); }
   else showToast('Delete failed','error');
@@ -431,8 +431,8 @@ function showToast(msg, type='success') {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>el.className='toast',3000);
 }
-async function api(url) { try { return await (await fetch('/SmartExpenseTracker'+url)).json(); } catch { return {}; } }
-async function logout() { try{await fetch('/SmartExpenseTracker/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
+async function api(url) { try { return await (await fetch(url)).json(); } catch { return {}; } }
+async function logout() { try{await fetch('/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
 </script>
 </body>
 </html>
