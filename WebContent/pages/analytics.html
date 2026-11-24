@@ -1,93 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Analytics — Smart Expense Tracker</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#050a0e;--surface:#0d1b2a;--surface2:#112240;--surface3:#162d4a;
-  --accent:#00d4ff;--accent2:#7b2fff;--green:#2ed573;--red:#ff4757;
-  --gold:#f5c842;--orange:#ffa502;--text:#e8f4f8;--muted:#5a7a8a;
-  --border:rgba(0,212,255,.12);--sidebar:220px;--header:64px;
-}
-html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
-.app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--header) 1fr;height:100vh}
-.sidebar{grid-row:1/3;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;position:relative;overflow:hidden}
-.sidebar::before{content:'';position:absolute;bottom:-80px;left:-80px;width:200px;height:200px;background:radial-gradient(circle,rgba(123,47,255,.15) 0%,transparent 70%);pointer-events:none}
-.brand{display:flex;align-items:center;gap:.75rem;padding:.5rem .5rem 1.5rem}
-.brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:grid;place-items:center;font-size:1.1rem}
-.brand-name{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:.05em}
-.nav{display:flex;flex-direction:column;gap:.25rem}
-.nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem .85rem;border-radius:11px;cursor:pointer;transition:all .2s;color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500}
-.nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:linear-gradient(135deg,rgba(123,47,255,.25),rgba(0,212,255,.15));color:var(--accent);border:1px solid rgba(0,212,255,.2)}
-.sidebar-footer{margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)}
-.user-chip{display:flex;align-items:center;gap:.75rem;padding:.75rem}
-.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;font-weight:700;font-size:.85rem;flex-shrink:0}
-.user-name{font-size:.875rem;font-weight:600}.user-email{font-size:.7rem;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.logout-btn{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;border-radius:9px;cursor:pointer;color:var(--muted);font-size:.85rem;transition:all .2s;border:none;background:none;font-family:'Outfit',sans-serif;width:100%}
-.logout-btn:hover{color:var(--red);background:rgba(255,71,87,.08)}
-.header{background:rgba(13,27,42,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:10}
-.page-title{font-size:1.1rem;font-weight:700}
-.month-picker{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:.45rem .8rem;font-family:'Outfit',sans-serif;font-size:.875rem;outline:none;cursor:pointer}
-.main{overflow-y:auto;padding:2rem;display:flex;flex-direction:column;gap:1.5rem}
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Analytics — Smart Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#050a0e;--surface:#0d1b2a;--surface2:#112240;--surface3:#162d4a;
+      --accent:#00d4ff;--accent2:#7b2fff;--green:#2ed573;--red:#ff4757;
+      --gold:#f5c842;--orange:#ffa502;--text:#e8f4f8;--muted:#5a7a8a;
+      --border:rgba(0,212,255,.12);--sidebar:220px;--header:64px;
+    }
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+    .app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--header) 1fr;height:100vh}
+    .sidebar{grid-row:1/3;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;position:relative;overflow:hidden}
+    .sidebar::before{content:'';position:absolute;bottom:-80px;left:-80px;width:200px;height:200px;background:radial-gradient(circle,rgba(123,47,255,.15) 0%,transparent 70%);pointer-events:none}
+    .brand{display:flex;align-items:center;gap:.75rem;padding:.5rem .5rem 1.5rem}
+    .brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:grid;place-items:center;font-size:1.1rem}
+    .brand-name{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:.05em}
+    .nav{display:flex;flex-direction:column;gap:.25rem}
+    .nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem .85rem;border-radius:11px;cursor:pointer;transition:all .2s;color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500}
+    .nav-item:hover{background:var(--surface2);color:var(--text)}
+    .nav-item.active{background:linear-gradient(135deg,rgba(123,47,255,.25),rgba(0,212,255,.15));color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+    .sidebar-footer{margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)}
+    .user-chip{display:flex;align-items:center;gap:.75rem;padding:.75rem}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+    .user-name{font-size:.875rem;font-weight:600}.user-email{font-size:.7rem;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+    .logout-btn{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;border-radius:9px;cursor:pointer;color:var(--muted);font-size:.85rem;transition:all .2s;border:none;background:none;font-family:'Outfit',sans-serif;width:100%}
+    .logout-btn:hover{color:var(--red);background:rgba(255,71,87,.08)}
+    .header{background:rgba(13,27,42,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:10}
+    .page-title{font-size:1.1rem;font-weight:700}
+    .month-picker{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:.45rem .8rem;font-family:'Outfit',sans-serif;font-size:.875rem;outline:none;cursor:pointer}
+    .main{overflow-y:auto;padding:2rem;display:flex;flex-direction:column;gap:1.5rem}
 
-.charts-full{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem}
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem}
-.chart-title{font-size:.875rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
-.chart-title::before{content:'';width:3px;height:16px;background:linear-gradient(var(--accent2),var(--accent));border-radius:2px}
-.chart-wrap{position:relative;height:280px}
-.chart-tall{height:340px}
+    .charts-full{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem}
+    .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem}
+    .chart-title{font-size:.875rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
+    .chart-title::before{content:'';width:3px;height:16px;background:linear-gradient(var(--accent2),var(--accent));border-radius:2px}
+    .chart-wrap{position:relative;height:280px}
+    .chart-tall{height:340px}
 
-.cat-list{display:flex;flex-direction:column;gap:.75rem;max-height:280px;overflow-y:auto;padding-right:.5rem}
-.cat-row{display:flex;align-items:center;gap:.75rem}
-.cat-row-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.cat-row-name{flex:1;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cat-row-bar-wrap{width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
-.cat-row-bar{height:100%;border-radius:3px}
-.cat-row-val{font-family:'JetBrains Mono',monospace;font-size:.8rem;min-width:70px;text-align:right}
+    .cat-list{display:flex;flex-direction:column;gap:.75rem;max-height:280px;overflow-y:auto;padding-right:.5rem}
+    .cat-row{display:flex;align-items:center;gap:.75rem}
+    .cat-row-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .cat-row-name{flex:1;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cat-row-bar-wrap{width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+    .cat-row-bar{height:100%;border-radius:3px}
+    .cat-row-val{font-family:'JetBrains Mono',monospace;font-size:.8rem;min-width:70px;text-align:right}
 
-.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden}
-.insight-card::after{content:'';position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;opacity:.08}
-.insight-card.i1::after{background:var(--accent)}
-.insight-card.i2::after{background:var(--green)}
-.insight-card.i3::after{background:var(--gold)}
-.insight-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.4rem}
-.insight-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:600;margin-bottom:.25rem}
-.insight-sub{font-size:.75rem;color:var(--muted)}
+    .insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden}
+    .insight-card::after{content:'';position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;opacity:.08}
+    .insight-card.i1::after{background:var(--accent)}
+    .insight-card.i2::after{background:var(--green)}
+    .insight-card.i3::after{background:var(--gold)}
+    .insight-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.4rem}
+    .insight-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:600;margin-bottom:.25rem}
+    .insight-sub{font-size:.75rem;color:var(--muted)}
 
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
-.spinner{width:28px;height:28px;border:3px solid var(--surface2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:2rem auto}
-@keyframes spin{to{transform:rotate(360deg)}}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+    .spinner{width:28px;height:28px;border:3px solid var(--surface2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:2rem auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── Mobile ── */
-.menu-btn{display:none;background:none;border:0;color:var(--text);font-size:1.6rem;cursor:pointer;line-height:1}
-.header-left{display:flex;align-items:center;gap:.75rem}
-.menu-overlay{display:none}
+      /* ── Mobile ── */
+    .menu-btn{display:none;background:none;border:0;color:var(--text);font-size:1.6rem;cursor:pointer;line-height:1}
+    .header-left{display:flex;align-items:center;gap:.75rem}
+    .menu-overlay{display:none}
 
-@media(max-width:768px){
-  .app{grid-template-columns:1fr;height:100dvh}
-  .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;z-index:90;
-    transform:translateX(-100%);transition:transform .3s}
-  .sidebar.open{transform:translateX(0)}
-  .menu-overlay.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80}
-  .menu-btn{display:block}
-  .header{padding:0 .75rem}
-  .page-title{font-size:1rem}
-  .main{padding:1rem}
-  .insights-grid{grid-template-columns:1fr}
-  .charts-full{grid-template-columns:1fr}
-  .chart-wrap,.chart-tall{height:260px}
-  .chart-card{padding:1rem}
-  .cat-row-bar-wrap{width:50px}
-}
-</style>
+    @media(max-width:768px){
+      .app{grid-template-columns:1fr;height:100dvh}
+      .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;z-index:90;
+        transform:translateX(-100%);transition:transform .3s}
+      .sidebar.open{transform:translateX(0)}
+      .menu-overlay.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80}
+      .menu-btn{display:block}
+      .header{padding:0 .75rem}
+      .page-title{font-size:1rem}
+      .main{padding:1rem}
+      .insights-grid{grid-template-columns:1fr}
+      .charts-full{grid-template-columns:1fr}
+      .chart-wrap,.chart-tall{height:260px}
+      .chart-card{padding:1rem}
+      .cat-row-bar-wrap{width:50px}
+    }
+  </style>
 </head>
 <body>
 <div class="app">
@@ -119,138 +119,138 @@ html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color
 </div>
 
 <script>
-(async function() {
-  const auth = await api('/api/auth?action=me');
-  if (!auth.auth) { window.location.href='login.html'; return; }
-  document.getElementById('sideUserName').textContent = auth.name;
-  document.getElementById('sideEmail').textContent    = auth.email;
-  document.getElementById('sideAvatar').textContent   = auth.name[0];
+  (async function() {
+    const auth = await api('/api/auth?action=me');
+    if (!auth.auth) { window.location.href='login.html'; return; }
+    document.getElementById('sideUserName').textContent = auth.name;
+    document.getElementById('sideEmail').textContent    = auth.email;
+    document.getElementById('sideAvatar').textContent   = auth.name[0];
 
-  const now = new Date();
-  const mp = document.getElementById('monthPicker');
-  mp.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  mp.addEventListener('change', load);
-  await load();
-})();
+    const now = new Date();
+    const mp = document.getElementById('monthPicker');
+    mp.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    mp.addEventListener('change', load);
+    await load();
+  })();
 
-async function load() {
-  const [y,m] = document.getElementById('monthPicker').value.split('-');
-  const [summary, trend, overview] = await Promise.all([
-    api(`/api/analytics?type=summary&year=${y}&month=${m}`),
-    api(`/api/analytics?type=trend`),
-    api(`/api/analytics?type=overview&year=${y}&month=${m}`)
-  ]);
-  render(summary||[], trend||{}, overview||{});
-}
+  async function load() {
+    const [y,m] = document.getElementById('monthPicker').value.split('-');
+    const [summary, trend, overview] = await Promise.all([
+      api(`/api/analytics?type=summary&year=${y}&month=${m}`),
+      api(`/api/analytics?type=trend`),
+      api(`/api/analytics?type=overview&year=${y}&month=${m}`)
+    ]);
+    render(summary||[], trend||{}, overview||{});
+  }
 
-function render(cats, trend, ov) {
-  const fmt = n => '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
-  const activeCats = cats.filter(c=>Number(c.totalSpent||0)>0);
-  const maxSpent   = activeCats.reduce((mx,c)=>Math.max(mx,Number(c.totalSpent||0)),0);
-  const topCat     = activeCats[0];
-  const total      = activeCats.reduce((s,c)=>s+Number(c.totalSpent||0),0);
+  function render(cats, trend, ov) {
+    const fmt = n => '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
+    const activeCats = cats.filter(c=>Number(c.totalSpent||0)>0);
+    const maxSpent   = activeCats.reduce((mx,c)=>Math.max(mx,Number(c.totalSpent||0)),0);
+    const topCat     = activeCats[0];
+    const total      = activeCats.reduce((s,c)=>s+Number(c.totalSpent||0),0);
 
-  document.getElementById('main').innerHTML = `
-    <div class="insights-grid">
-      <div class="insight-card i1">
-        <div class="insight-label">Top Category</div>
-        <div class="insight-val" style="color:var(--accent)">${topCat?topCat.name:'—'}</div>
-        <div class="insight-sub">${topCat?fmt(topCat.totalSpent)+' spent':''}</div>
+    document.getElementById('main').innerHTML = `
+      <div class="insights-grid">
+        <div class="insight-card i1">
+          <div class="insight-label">Top Category</div>
+          <div class="insight-val" style="color:var(--accent)">${topCat?topCat.name:'—'}</div>
+          <div class="insight-sub">${topCat?fmt(topCat.totalSpent)+' spent':''}</div>
+        </div>
+        <div class="insight-card i2">
+          <div class="insight-label">Budget Utilization</div>
+          <div class="insight-val" style="color:${ov.percentUsed>100?'var(--red)':'var(--green)'}">${ov.percentUsed||0}%</div>
+          <div class="insight-sub">${fmt(ov.monthlyTotal)} of ${fmt(ov.monthlyBudget)}</div>
+        </div>
+        <div class="insight-card i3">
+          <div class="insight-label">Active Categories</div>
+          <div class="insight-val" style="color:var(--gold)">${activeCats.length}</div>
+          <div class="insight-sub">out of ${cats.length} total</div>
+        </div>
       </div>
-      <div class="insight-card i2">
-        <div class="insight-label">Budget Utilization</div>
-        <div class="insight-val" style="color:${ov.percentUsed>100?'var(--red)':'var(--green)'}">${ov.percentUsed||0}%</div>
-        <div class="insight-sub">${fmt(ov.monthlyTotal)} of ${fmt(ov.monthlyBudget)}</div>
+
+      <div class="charts-full">
+        <div class="chart-card">
+          <div class="chart-title">12-Month Spending Trend</div>
+          <div class="chart-wrap chart-tall"><canvas id="trendC"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Category Distribution</div>
+          <div class="chart-wrap"><canvas id="donutC"></canvas></div>
+        </div>
       </div>
-      <div class="insight-card i3">
-        <div class="insight-label">Active Categories</div>
-        <div class="insight-val" style="color:var(--gold)">${activeCats.length}</div>
-        <div class="insight-sub">out of ${cats.length} total</div>
+
+      <div class="charts-full">
+        <div class="chart-card">
+          <div class="chart-title">Category-wise Spending</div>
+          <div class="chart-wrap"><canvas id="barC"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Spend Breakdown</div>
+          <div class="cat-list" id="catList"></div>
+        </div>
       </div>
-    </div>
+    `;
 
-    <div class="charts-full">
-      <div class="chart-card">
-        <div class="chart-title">12-Month Spending Trend</div>
-        <div class="chart-wrap chart-tall"><canvas id="trendC"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Category Distribution</div>
-        <div class="chart-wrap"><canvas id="donutC"></canvas></div>
-      </div>
-    </div>
+    // Trend line chart
+    new Chart(document.getElementById('trendC'), {
+      type:'line',
+      data:{labels:trend.labels||[],datasets:[{
+        label:'Spending',data:trend.values||[],
+        borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.07)',
+        fill:true,tension:.4,borderWidth:2.5,
+        pointBackgroundColor:'#00d4ff',pointRadius:4,pointHoverRadius:7
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>'₹'+Number(v.raw).toLocaleString('en-IN')}}},
+        scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7a8a',font:{size:10}}},
+                y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7a8a',font:{size:10},callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}}}
+    });
 
-    <div class="charts-full">
-      <div class="chart-card">
-        <div class="chart-title">Category-wise Spending</div>
-        <div class="chart-wrap"><canvas id="barC"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Spend Breakdown</div>
-        <div class="cat-list" id="catList"></div>
-      </div>
-    </div>
-  `;
+    // Donut
+    if (activeCats.length) new Chart(document.getElementById('donutC'), {
+      type:'doughnut',
+      data:{labels:activeCats.map(c=>c.name),datasets:[{data:activeCats.map(c=>Number(c.totalSpent)),
+        backgroundColor:activeCats.map(c=>c.color),borderWidth:0,hoverOffset:10}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
+        plugins:{legend:{position:'bottom',labels:{color:'#e8f4f8',font:{size:10},boxWidth:10,padding:10}},
+          tooltip:{callbacks:{label:v=>`${v.label}: ₹${Number(v.raw).toLocaleString('en-IN')}`}}}}
+    });
 
-  // Trend line chart
-  new Chart(document.getElementById('trendC'), {
-    type:'line',
-    data:{labels:trend.labels||[],datasets:[{
-      label:'Spending',data:trend.values||[],
-      borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.07)',
-      fill:true,tension:.4,borderWidth:2.5,
-      pointBackgroundColor:'#00d4ff',pointRadius:4,pointHoverRadius:7
-    }]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>'₹'+Number(v.raw).toLocaleString('en-IN')}}},
-      scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7a8a',font:{size:10}}},
-              y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7a8a',font:{size:10},callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}}}
-  });
+    // Bar
+    if (activeCats.length) new Chart(document.getElementById('barC'), {
+      type:'bar',
+      data:{labels:activeCats.map(c=>c.name),datasets:[{
+        data:activeCats.map(c=>Number(c.totalSpent)),
+        backgroundColor:activeCats.map(c=>c.color+'cc'),
+        borderColor:activeCats.map(c=>c.color),
+        borderWidth:1.5,borderRadius:6,
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>'₹'+Number(v.raw).toLocaleString('en-IN')}}},
+        scales:{x:{grid:{display:false},ticks:{color:'#5a7a8a',font:{size:10}}},
+                y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7a8a',font:{size:10},callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}}}
+    });
 
-  // Donut
-  if (activeCats.length) new Chart(document.getElementById('donutC'), {
-    type:'doughnut',
-    data:{labels:activeCats.map(c=>c.name),datasets:[{data:activeCats.map(c=>Number(c.totalSpent)),
-      backgroundColor:activeCats.map(c=>c.color),borderWidth:0,hoverOffset:10}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
-      plugins:{legend:{position:'bottom',labels:{color:'#e8f4f8',font:{size:10},boxWidth:10,padding:10}},
-        tooltip:{callbacks:{label:v=>`${v.label}: ₹${Number(v.raw).toLocaleString('en-IN')}`}}}}
-  });
+    // Cat list
+    const list = document.getElementById('catList');
+    if (list) list.innerHTML = cats.map(c => {
+      const pct = maxSpent > 0 ? (Number(c.totalSpent||0)/maxSpent)*100 : 0;
+      return `<div class="cat-row">
+        <div class="cat-row-dot" style="background:${c.color}"></div>
+        <div class="cat-row-name">${c.name}</div>
+        <div class="cat-row-bar-wrap"><div class="cat-row-bar" style="width:${pct}%;background:${c.color}"></div></div>
+        <div class="cat-row-val" style="color:${c.color}">₹${Number(c.totalSpent||0).toLocaleString('en-IN',{maximumFractionDigits:0})}</div>
+      </div>`;
+    }).join('');
+  }
 
-  // Bar
-  if (activeCats.length) new Chart(document.getElementById('barC'), {
-    type:'bar',
-    data:{labels:activeCats.map(c=>c.name),datasets:[{
-      data:activeCats.map(c=>Number(c.totalSpent)),
-      backgroundColor:activeCats.map(c=>c.color+'cc'),
-      borderColor:activeCats.map(c=>c.color),
-      borderWidth:1.5,borderRadius:6,
-    }]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>'₹'+Number(v.raw).toLocaleString('en-IN')}}},
-      scales:{x:{grid:{display:false},ticks:{color:'#5a7a8a',font:{size:10}}},
-              y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7a8a',font:{size:10},callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}}}
-  });
-
-  // Cat list
-  const list = document.getElementById('catList');
-  if (list) list.innerHTML = cats.map(c => {
-    const pct = maxSpent > 0 ? (Number(c.totalSpent||0)/maxSpent)*100 : 0;
-    return `<div class="cat-row">
-      <div class="cat-row-dot" style="background:${c.color}"></div>
-      <div class="cat-row-name">${c.name}</div>
-      <div class="cat-row-bar-wrap"><div class="cat-row-bar" style="width:${pct}%;background:${c.color}"></div></div>
-      <div class="cat-row-val" style="color:${c.color}">₹${Number(c.totalSpent||0).toLocaleString('en-IN',{maximumFractionDigits:0})}</div>
-    </div>`;
-  }).join('');
-}
-
-async function api(url) { try { return await (await fetch(url)).json(); } catch { return {}; } }
-async function logout() { try{await fetch('/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
-  function toggleMenu() {
-  document.querySelector('.sidebar').classList.toggle('open');
-  document.getElementById('menuOverlay').classList.toggle('show');
-}
+  async function api(url) { try { return await (await fetch(url)).json(); } catch { return {}; } }
+  async function logout() { try{await fetch('/api/auth?action=logout',{method:'POST'})}catch{} window.location.href='login.html'; }
+    function toggleMenu() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.getElementById('menuOverlay').classList.toggle('show');
+  }
 </script>
 </body>
 </html>
