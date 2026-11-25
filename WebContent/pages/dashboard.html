@@ -1593,15 +1593,7 @@ clearTimeout(searchTimer);
 
 
   // EXPENSE TABLE
-
-  function renderExpenseTable(expenses) {
-
-    const wrap = document.getElementById('expTable');
-
-    if (!wrap) return;
-
-    if (!expenses.length) {
-    function highlightMatch(value) {
+function highlightMatch(value) {
   const text = String(value || '—');
 
   if (!activeSearchTerm) return text;
@@ -1611,6 +1603,13 @@ clearTimeout(searchTimer);
 
   return text.replace(regex, '<span class="search-highlight">$1</span>');
 }
+  function renderExpenseTable(expenses) {
+
+    const wrap = document.getElementById('expTable');
+
+    if (!wrap) return;
+
+    if (!expenses.length) {
 
       wrap.innerHTML =
         '<div class="empty">No expenses found</div>';
