@@ -266,36 +266,69 @@
       border-color:var(--accent);
     }
 
-    .search-box {
-      background:var(--surface2);
-      border:1px solid var(--border);
-      border-radius:10px;
-      color:var(--text);
-      padding:.55rem .8rem .55rem 2.2rem;
-      font-family:'Outfit',sans-serif;
-      font-size:.875rem;
-      outline:none;
-      width:200px;
-      transition:all .2s;
-    }
-
-    .search-box:focus {
-      border-color:var(--accent);
-      width:240px;
-    }
-
     .search-wrap {
-      position:relative;
-    }
+  position:relative;
+  display:flex;
+  align-items:center;
+}
 
-    .search-icon {
-      position:absolute;
-      left:.7rem;
-      top:50%;
-      transform:translateY(-50%);
-      color:var(--muted);
-      font-size:.9rem;
-    }
+.search-icon {
+  position:absolute;
+  left:.85rem;
+  color:var(--muted);
+  font-size:.9rem;
+  pointer-events:none;
+}
+
+.search-box {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--text);
+  padding:.7rem 4.2rem .7rem 2.5rem;
+  font-family:'Outfit',sans-serif;
+  font-size:.875rem;
+  outline:none;
+  width:240px;
+  transition:all .25s;
+}
+
+.search-box:focus {
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,212,255,.12);
+  width:280px;
+}
+
+.search-box::placeholder {
+  color:var(--muted);
+}
+
+.search-clear {
+  position:absolute;
+  right:2.7rem;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:.8rem;
+  display:none;
+  padding:.3rem;
+}
+
+.search-clear:hover {
+  color:var(--red);
+}
+
+.search-shortcut {
+  position:absolute;
+  right:.7rem;
+  border:1px solid var(--border);
+  border-radius:5px;
+  color:var(--muted);
+  font-size:.7rem;
+  padding:.1rem .4rem;
+  pointer-events:none;
+}
 
     .menu-btn {
       display:none;
@@ -720,10 +753,10 @@
 
     @media(max-width:768px) {
       .app {
-        grid-template-columns:1fr;
-        grid-template-rows:var(--header) 1fr;
-        min-height:100dvh;
-      }
+  grid-template-columns:1fr;
+  grid-template-rows:auto 1fr;
+  min-height:100dvh;
+}
 
       .sidebar {
         position:fixed;
@@ -751,21 +784,38 @@
         display:block;
       }
 
-      .header {
-        padding:0 1rem;
-      }
+     .header {
+  padding:.75rem 1rem;
+  flex-direction:column;
+  align-items:stretch;
+  gap:.65rem;
+}
 
       .page-title {
         font-size:1.05rem;
       }
 
       .header-right {
-        gap:.5rem;
-      }
+  width:100%;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+
+.header-left {
+  width:100%;
+}
 
       .search-wrap {
-        display:none;
-      }
+  display:flex;
+  width:100%;
+  flex:1;
+}
+
+.search-box,
+.search-box:focus {
+  width:100%;
+}
 
       .month-picker {
         max-width:145px;
@@ -899,9 +949,22 @@
         <input
                 class="search-box"
                 id="searchBox"
+                type="text"
                 placeholder="Search expenses..."
+                autocomplete="off"
                 oninput="liveSearch(this.value)"
         />
+
+        <button
+                class="search-clear"
+                id="searchClear"
+                type="button"
+                onclick="clearSearch()"
+                aria-label="Clear search">
+          ✕
+        </button>
+
+        <span class="search-shortcut">/</span>
       </div>
 
     </div>
@@ -924,6 +987,8 @@
 
   let trendChart = null;
   let donutChart = null;
+  let searchTimer;
+let searchRequestId = 0;
 
 
   // INITIALIZATION
@@ -980,6 +1045,8 @@
   async function loadDashboard() {
 
     const monthValue = document.getElementById('monthPicker').value;
+    searchRequestId++;
+clearTimeout(searchTimer);
 
     if (!monthValue) return;
 
@@ -1611,15 +1678,27 @@
 
   // LIVE SEARCH
 
-  async function liveSearch(q) {
+  function liveSearch(q) {
 
-    if (!q.trim()) {
+  const clearBtn = document.getElementById('searchClear');
 
-      loadDashboard();
+  clearBtn.style.display = q.trim() ? 'block' : 'none';
 
-      return;
+  clearTimeout(searchTimer);
 
-    }
+  if (!q.trim()) {
+
+    searchRequestId++;
+
+    renderExpenseTable(allExpenses.slice(0, 15));
+
+    return;
+
+  }
+
+  searchTimer = setTimeout(async () => {
+
+    const requestId = ++searchRequestId;
 
     try {
 
@@ -1627,19 +1706,42 @@
         `/api/expenses?q=${encodeURIComponent(q)}`
       );
 
+      if (
+        requestId !== searchRequestId ||
+        q !== document.getElementById('searchBox').value
+      ) {
+        return;
+      }
+
       if (Array.isArray(res)) {
 
-        renderExpenseTable(res);
+        renderExpenseTable(res.slice(0, 15));
 
       }
 
     } catch(error) {
 
-      console.error('Search error:',error);
+      console.error('Search error:', error);
 
     }
 
-  }
+  }, 300);
+
+}
+
+
+function clearSearch() {
+
+  const box = document.getElementById('searchBox');
+
+  box.value = '';
+
+  liveSearch('');
+
+  box.focus();
+
+}
+
 
 
   // DATE FORMAT
@@ -1720,6 +1822,31 @@
       .classList.toggle('show');
 
   }
+  document.addEventListener('keydown', function(e) {
+
+  const searchBox = document.getElementById('searchBox');
+
+  if (
+    e.key === '/' &&
+    !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)
+  ) {
+
+    e.preventDefault();
+
+    searchBox.focus();
+
+  }
+
+  if (
+    e.key === 'Escape' &&
+    document.activeElement.id === 'searchBox'
+  ) {
+
+    clearSearch();
+
+  }
+
+});
 
 </script>
 
