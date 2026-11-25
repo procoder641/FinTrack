@@ -1,117 +1,119 @@
-# 💰 Smart Expense Tracker System
+💰 FinTrack – Smart Expense Tracker
 
-A full-stack expense management web application built with **Java Servlets, JDBC, MySQL, HTML5, CSS3, and JavaScript**.
+A full-stack personal expense management web application built using Java Servlets, JDBC, MySQL, HTML5, CSS3, and JavaScript. FinTrack helps users manage daily expenses, track spending patterns, set budgets, and analyze their financial activities through interactive dashboards.
 
----
+🚀 Live Demo
 
-## 🚀 Features
+Live Application: https://fintrack-production-9afa8444.up.railway.app
 
-- **User Authentication** — Secure register/login with BCrypt password hashing and session management
-- **Dashboard** — Real-time KPI cards, 12-month trend line chart, category donut chart
-- **Expense CRUD** — Add, edit, delete, search, and filter expenses with pagination
-- **Category Management** — Custom categories with colors, icons, and budget limits
-- **Analytics Page** — Bar charts, category breakdowns, budget utilization insights
-- **Stored Procedures** — MySQL stored procedures for monthly summary and trend data
-- **Responsive UI** — Works on desktop and mobile browsers
+✨ Features
 
----
+- User Authentication — Secure registration and login with BCrypt password hashing and session management.
+- Dashboard — Real-time KPI cards, 12-month spending trends, and category-wise charts.
+- Expense Management — Add, edit, delete, search, filter, and paginate expenses.
+- Category Management — Custom categories with colors, icons, and budget limits.
+- Analytics — Interactive charts, category breakdowns, and budget utilization insights.
+- Database Procedures — MySQL stored procedures for monthly summaries and spending trends.
+- Responsive UI — Compatible with desktop and mobile browsers.
 
-## 🛠 Tech Stack
+🛠️ Tech Stack
 
-| Layer      | Technology                          |
-|------------|-------------------------------------|
-| Backend    | Java 17, Jakarta Servlets (Tomcat 10)|
-| Database   | MySQL 8.0, JDBC, Stored Procedures  |
-| Frontend   | HTML5, CSS3, JavaScript (ES6+)      |
-| Charts     | Chart.js 4.4                        |
-| Build Tool | Apache Maven                        |
-| Security   | BCrypt (jBCrypt), HTTP Sessions     |
+Layer| Technology
+Backend| Java 17, Jakarta Servlets
+Database| MySQL 8.0, JDBC
+Frontend| HTML5, CSS3, JavaScript (ES6+)
+Charts| Chart.js 4.4
+Build Tool| Apache Maven
+Server| Apache Tomcat 10.1
+Security| BCrypt, HTTP Sessions
+Containerization| Docker
+Deployment| Railway
 
----
+🐳 Docker & Deployment
 
-## 📁 Project Structure
+- Created a multi-stage Dockerfile for application deployment.
+- Used Maven to build the application into a WAR file.
+- Used Apache Tomcat 10.1 with Java 17 to run the application.
+- Configured the application for container-based deployment.
+- Deployed the live application on Railway.
 
-```
+📁 Project Structure
+
 SmartExpenseTracker/
-├── pom.xml                          # Maven build config
+├── Dockerfile
+├── pom.xml
 ├── sql/
-│   └── schema.sql                   # DB schema + stored procedures + seed data
+│   └── schema.sql
 ├── WebContent/
-│   ├── WEB-INF/web.xml
+│   ├── WEB-INF/
+│   │   └── web.xml
 │   └── pages/
-│       ├── login.html               # Auth page
-│       ├── dashboard.html           # Main dashboard
-│       ├── expenses.html            # Expense CRUD
-│       ├── categories.html          # Category management
-│       └── analytics.html           # Advanced analytics
+│       ├── login.html
+│       ├── dashboard.html
+│       ├── expenses.html
+│       ├── categories.html
+│       └── analytics.html
 └── src/main/java/com/expensetracker/
-    ├── model/         # User, Expense, Category POJOs
-    ├── dao/           # Data Access Objects (JDBC)
-    ├── servlet/       # REST-style HTTP Servlets
-    └── util/          # DBConnection utility
-```
+    ├── model/
+    ├── dao/
+    ├── servlet/
+    └── util/
 
----
+⚙️ Local Setup & Installation
 
-## ⚙️ Setup & Installation
+Prerequisites
 
-### Prerequisites
 - Java 17+
 - Apache Maven 3.8+
 - MySQL 8.0+
 - Apache Tomcat 10.x
 
-### Step 1 — Database Setup
-```sql
--- In MySQL Workbench or terminal:
+Step 1 – Clone Repository
+
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd SmartExpenseTracker
+
+Step 2 – Database Setup
+
+Import the database schema:
+
 mysql -u root -p < sql/schema.sql
-```
 
-### Step 2 — Configure DB Password
-Edit `src/main/java/com/expensetracker/util/DBConnection.java`:
-```java
-private static final String PASS = "your_mysql_password";
-```
+Step 3 – Configure Database
 
-### Step 3 — Build
-```bash
+Configure your MySQL connection details in:
+
+"src/main/java/com/expensetracker/util/DBConnection.java"
+
+Step 4 – Build Application
+
 mvn clean package
-```
 
-### Step 4 — Deploy
-Copy `target/SmartExpenseTracker.war` to Tomcat's `webapps/` folder and start Tomcat.
+Step 5 – Deploy on Tomcat
 
-### Step 5 — Access
-```
+Copy the generated WAR file from the "target" directory into Tomcat's "webapps" folder and start Tomcat.
+
+Step 6 – Access Application
+
 http://localhost:8080/SmartExpenseTracker/pages/login.html
-```
 
-**Demo credentials:** `demo@expense.com` / `demo1234`
+🗄️ Database Design
 
----
+- "users" – User authentication and monthly budget information.
+- "categories" – User-specific expense categories.
+- "expenses" – Expense transaction records.
+- "sp_monthly_category_summary" – Monthly category-wise expense summary.
+- "sp_monthly_trend" – Monthly spending trend data.
 
-## 📸 Pages
+📸 Application Pages
 
-| Page         | Description                              |
-|--------------|------------------------------------------|
-| Login        | Animated auth page with register toggle  |
-| Dashboard    | KPI cards, charts, recent transactions   |
-| Expenses     | Full CRUD table with search & filter     |
-| Categories   | Color-coded category cards with budgets  |
-| Analytics    | Trend, donut, bar charts + insights      |
+Page| Description
+Login & Registration| User authentication
+Dashboard| Financial overview and charts
+Expenses| Expense CRUD, search and filters
+Categories| Category and budget management
+Analytics| Spending trends and insights
 
----
+👨‍💻 Author
 
-## 🗃️ Database Design
-
-- `users` — Authentication + monthly budget
-- `categories` — Per-user categories with color/icon/budget
-- `expenses` — Core transaction records
-- `sp_monthly_category_summary` — Stored procedure for dashboard analytics
-- `sp_monthly_trend` — Stored procedure for 12-month trend data
-
----
-
-## 👨‍💻 Author
-
-Built as a full-stack Java project demonstrating JDBC, Servlet architecture, and responsive frontend design.
+Developed as a full-stack Java web application demonstrating practical implementation of Java Servlets, JDBC, MySQL, database operations, frontend development, and Docker-based deployment.
