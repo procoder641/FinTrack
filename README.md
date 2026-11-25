@@ -93,9 +93,10 @@ Step 5 – Deploy on Tomcat
 
 Copy the generated WAR file from the "target" directory into Tomcat's "webapps" folder and start Tomcat.
 
-Step 6 – Access Application
+Step 6 – Access Live Application
 
-http://localhost:8080/SmartExpenseTracker/pages/login.html
+https://fintrack-production-9afa8444.up.railway.app
+
 
 🗄️ Database Design
 
