@@ -18,16 +18,17 @@ Live Application: https://fintrack-production-9afa8444.up.railway.app
 
 🛠️ Tech Stack
 
-Layer| Technology
-Backend| Java 17, Jakarta Servlets
-Database| MySQL 8.0, JDBC
-Frontend| HTML5, CSS3, JavaScript (ES6+)
-Charts| Chart.js 4.4
-Build Tool| Apache Maven
-Server| Apache Tomcat 10.1
-Security| BCrypt, HTTP Sessions
-Containerization| Docker
-Deployment| Railway
+| Layer | Technology |
+|---|---|
+| Backend | Java 17, Jakarta Servlets |
+| Database | MySQL 8.0, JDBC |
+| Frontend | HTML5, CSS3, JavaScript (ES6+) |
+| Charts | Chart.js 4.4 |
+| Build Tool | Apache Maven |
+| Server | Apache Tomcat 10.1 |
+| Security | BCrypt, HTTP Sessions |
+| Containerization | Docker |
+| Deployment | Railway |
 
 🐳 Docker & Deployment
 
@@ -95,7 +96,7 @@ Copy the generated WAR file from the "target" directory into Tomcat's "webapps" 
 
 Step 6 – Access Live Application
 
-https://fintrack-production-9afa8444.up.railway.app
+[Open FinTrack](https://fintrack-production-9afa8444.up.railway.app)
 
 
 🗄️ Database Design
