@@ -233,31 +233,91 @@
 
     .month-picker:focus{border-color:var(--accent)}
 
-    .search-wrap{position:relative}
+    /* Premium Search */
 
-    .search-icon{
-    position:absolute;
-    left:.7rem;
-    top:50%;
-    transform:translateY(-50%);
-    color:var(--muted);
-    }
+.search-wrap{
+position:relative;
+display:flex;
+align-items:center;
+width:300px;
+height:42px;
+background:linear-gradient(135deg,var(--surface2),rgba(22,45,74,.85));
+border:1px solid var(--border);
+border-radius:12px;
+transition:all .25s ease;
+}
 
-    .search-box{
-    background:var(--surface2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    color:var(--text);
-    padding:.5rem .8rem .5rem 2.2rem;
-    font-family:'Outfit',sans-serif;
-    font-size:.875rem;
-    outline:none;
-    width:220px;
-    transition:all .2s;
-    }
+.search-wrap:focus-within{
+border-color:var(--accent);
+box-shadow:0 0 0 3px rgba(0,212,255,.10),0 5px 20px rgba(0,212,255,.08);
+transform:translateY(-1px);
+}
 
-    .search-box:focus{border-color:var(--accent)}
-    .search-box::placeholder{color:var(--muted)}
+.search-icon{
+position:absolute;
+left:13px;
+color:var(--muted);
+font-size:1rem;
+pointer-events:none;
+transition:color .2s;
+}
+
+.search-wrap:focus-within .search-icon{
+color:var(--accent);
+}
+
+.search-box{
+width:100%;
+height:100%;
+background:transparent;
+border:none;
+outline:none;
+color:var(--text);
+padding:0 65px 0 40px;
+font-family:'Outfit',sans-serif;
+font-size:.88rem;
+}
+
+.search-box::placeholder{
+color:var(--muted);
+}
+
+.search-clear{
+position:absolute;
+right:9px;
+width:25px;
+height:25px;
+border:none;
+border-radius:7px;
+background:var(--surface3);
+color:var(--muted);
+cursor:pointer;
+display:none;
+place-items:center;
+font-size:.85rem;
+transition:all .2s;
+}
+
+.search-clear.show{
+display:grid;
+}
+
+.search-clear:hover{
+background:rgba(255,71,87,.15);
+color:var(--red);
+}
+
+.search-shortcut{
+position:absolute;
+right:39px;
+font-family:'JetBrains Mono',monospace;
+font-size:.65rem;
+color:var(--muted);
+border:1px solid var(--border);
+border-radius:5px;
+padding:2px 5px;
+pointer-events:none;
+}
 
     .add-btn{
     background:linear-gradient(135deg,var(--accent2),var(--accent));
@@ -863,7 +923,36 @@
 
     .page-title{font-size:1rem}
 
-    .search-wrap{display:none}
+    .search-wrap{
+     display:flex;
+     width:100%;
+     height:44px;
+     order:3;
+     }
+     .header-right{
+      flex-wrap:wrap;
+      gap:.5rem;
+      }
+      .app{
+grid-template-rows:auto auto;
+}
+
+.header{
+flex-wrap:wrap;
+padding:.7rem .8rem;
+gap:.6rem;
+}
+
+.header-right{
+width:100%;
+flex-wrap:wrap;
+justify-content:space-between;
+}
+
+.search-wrap{
+width:100%;
+order:3;
+}
 
     .add-text{display:none}
 
@@ -983,8 +1072,26 @@
       <input type="month" class="month-picker" id="monthPicker"/>
 
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input class="search-box" id="searchBox" placeholder="Search expenses..." oninput="handleSearch(this.value)"/>
+        <span class="search-icon">⌕</span>
+
+        <input
+                class="search-box"
+                id="searchBox"
+                type="search"
+                placeholder="Search your expenses..."
+                autocomplete="off"
+                oninput="handleSearch(this.value)"
+        />
+
+        <span class="search-shortcut" id="searchShortcut">/</span>
+
+        <button
+                type="button"
+                class="search-clear"
+                id="searchClear"
+                onclick="clearSearch()"
+                title="Clear search"
+        >✕</button>
       </div>
 
       <button class="add-btn" onclick="openModal()">＋<span class="add-text"> Add Expense</span></button>
@@ -1147,6 +1254,8 @@
   let allExpenses = [], filteredExpenses = [], categories = [];
   let currentPage = 1, perPage = 12, activeFilter = 'all';
   let searchQuery = '';
+  let searchTimer;
+let searchRequestId = 0;
 
   (async function init() {
 
@@ -1223,7 +1332,9 @@
   count ? '₹'+(total/count).toLocaleString('en-IN',{maximumFractionDigits:2}) : '₹0';
 
   document.getElementById('tableCount').textContent =
-  `${count} transaction${count===1?'':'s'} found`;
+  searchQuery.trim()
+    ? `${count} result${count === 1 ? '' : 's'} for "${searchQuery}"`
+    : `${count} transaction${count === 1 ? '' : 's'} found`;
 
   }
 
@@ -1366,35 +1477,49 @@
 
   }
 
-  async function handleSearch(q) {
-
+  function handleSearch(q) {
   searchQuery = q;
 
+  const clearBtn = document.getElementById('searchClear');
+  clearBtn.style.display = q.trim() ? 'block' : 'none';
+
+  clearTimeout(searchTimer);
+
   if (!q.trim()) {
-  applyFilter();
-  return;
+    searchRequestId++;
+    applyFilter();
+    return;
   }
 
-  await performSearch(q);
+  searchTimer = setTimeout(() => {
+    performSearch(q);
+  }, 300);
+}
 
-  }
+function clearSearch() {
+  const box = document.getElementById('searchBox');
+  box.value = '';
+  handleSearch('');
+  box.focus();
+}
 
-  async function performSearch(q) {
+async function performSearch(q) {
+  const requestId = ++searchRequestId;
 
   const data = await api(`/api/expenses?q=${encodeURIComponent(q)}`);
+
+  if (requestId !== searchRequestId || q !== searchQuery) return;
 
   const results = Array.isArray(data) ? data : [];
 
   filteredExpenses = results.filter(e =>
-  activeFilter === 'all' || e.paymentMode === activeFilter
+    activeFilter === 'all' || e.paymentMode === activeFilter
   );
 
   currentPage = 1;
-
   updateSummary();
   renderTable();
-
-  }
+}
 
   /* Modal */
 
@@ -1660,6 +1785,22 @@
   if(e.target===this) closeModal();
 
   });
+  document.addEventListener('keydown', function(e) {
+  if (
+    e.key === '/' &&
+    !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)
+  ) {
+    e.preventDefault();
+    document.getElementById('searchBox').focus();
+  }
+
+  if (
+    e.key === 'Escape' &&
+    document.activeElement.id === 'searchBox'
+  ) {
+    clearSearch();
+  }
+});
 
 </script>
 
