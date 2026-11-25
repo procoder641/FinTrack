@@ -1802,22 +1802,29 @@ async function submitSearch() {
 
     setTimeout(() => {
 
-      if (requestId !== searchRequestId) return;
+  if (requestId !== searchRequestId) return;
 
-      const firstRow = document.querySelector(
-        '#expTable .search-result-row'
-      );
+  const firstRow = document.querySelector(
+    '#expTable .search-result-row'
+  );
 
-      if (firstRow) {
+  if (firstRow) {
 
-        firstRow.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+    firstRow.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
 
-      }
+  } else {
 
-    }, 100);
+    document.getElementById('expTable').scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+
+  }
+
+}, 100);
 
   } catch(error) {
 
