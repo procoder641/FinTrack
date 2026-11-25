@@ -8,13 +8,13 @@ Live Application: https://fintrack-production-9afa8444.up.railway.app
 
 ✨ Features
 
-- User Authentication — Secure registration and login with BCrypt password hashing and session management.
-- Dashboard — Real-time KPI cards, 12-month spending trends, and category-wise charts.
-- Expense Management — Add, edit, delete, search, filter, and paginate expenses.
-- Category Management — Custom categories with colors, icons, and budget limits.
-- Analytics — Interactive charts, category breakdowns, and budget utilization insights.
-- Database Procedures — MySQL stored procedures for monthly summaries and spending trends.
-- Responsive UI — Compatible with desktop and mobile browsers.
+- **User Authentication** — Secure registration and login with BCrypt password hashing and session management.
+- **Dashboard** — Real-time KPI cards, 12-month spending trends, and category-wise charts.
+- **Expense Management** — Add, edit, delete, search, filter, and paginate expenses.
+- **Category Management** — Custom categories with colors, icons, and budget limits.
+- **Analytics** — Interactive charts, category breakdowns, and budget utilization insights.
+- **Database Procedures** — MySQL stored procedures for monthly summaries and spending trends.
+- **Responsive UI** — Compatible with desktop and mobile browsers.
 
 🛠️ Tech Stack
 
@@ -109,12 +109,13 @@ Step 6 – Access Live Application
 
 📸 Application Pages
 
-Page| Description
-Login & Registration| User authentication
-Dashboard| Financial overview and charts
-Expenses| Expense CRUD, search and filters
-Categories| Category and budget management
-Analytics| Spending trends and insights
+| Page | Description |
+|---|---|
+| Login & Registration | User authentication |
+| Dashboard | Financial overview and charts |
+| Expenses | Expense CRUD, search and filters |
+| Categories | Category and budget management |
+| Analytics | Spending trends and insights |
 
 👨‍💻 Author
 
