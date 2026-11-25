@@ -635,6 +635,23 @@
     .expense-table tr:last-child td {
       border-bottom:none;
     }
+    /* SEARCH HIGHLIGHT */
+
+.search-highlight {
+  background:#ffe66d;
+  color:#111;
+  padding:2px 4px;
+  border-radius:4px;
+  font-weight:700;
+}
+
+.search-result-row td {
+  background:rgba(245,200,66,.08);
+}
+
+.search-result-row {
+  outline:1px solid rgba(245,200,66,.5);
+}
 
     .exp-title {
       font-weight:600;
@@ -989,6 +1006,7 @@
   let donutChart = null;
   let searchTimer;
 let searchRequestId = 0;
+let activeSearchTerm = '';
 
 
   // INITIALIZATION
@@ -1583,6 +1601,16 @@ clearTimeout(searchTimer);
     if (!wrap) return;
 
     if (!expenses.length) {
+    function highlightMatch(value) {
+  const text = String(value || '—');
+
+  if (!activeSearchTerm) return text;
+
+  const escaped = activeSearchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+
+  return text.replace(regex, '<span class="search-highlight">$1</span>');
+}
 
       wrap.innerHTML =
         '<div class="empty">No expenses found</div>';
@@ -1619,11 +1647,11 @@ clearTimeout(searchTimer);
 
               return `
 
-                <tr>
+                <tr class="${activeSearchTerm ? 'search-result-row' : ''}">
 
                   <td class="exp-title">
-                    ${e.title || 'Untitled'}
-                  </td>
+  ${highlightMatch(e.title || 'Untitled')}
+</td>
 
                   <td>
 
@@ -1639,7 +1667,7 @@ clearTimeout(searchTimer);
                         "
                       ></span>
 
-                      ${e.categoryName || '—'}
+                      ${highlightMatch(e.categoryName || '—')}
 
                     </span>
 
@@ -1651,7 +1679,7 @@ clearTimeout(searchTimer);
 
                   <td>
                     <span class="badge badge-${mode}">
-                      ${e.paymentMode || 'Other'}
+                      ${highlightMatch(e.paymentMode || 'Other')}
                     </span>
                   </td>
 
@@ -1689,11 +1717,11 @@ clearTimeout(searchTimer);
   if (!q.trim()) {
 
     searchRequestId++;
+    activeSearchTerm = '';
 
     renderExpenseTable(allExpenses.slice(0, 15));
 
     return;
-
   }
 
   searchTimer = setTimeout(async () => {
@@ -1714,6 +1742,8 @@ clearTimeout(searchTimer);
       }
 
       if (Array.isArray(res)) {
+
+        activeSearchTerm = q.trim();
 
         renderExpenseTable(res.slice(0, 15));
 
@@ -1739,6 +1769,62 @@ function clearSearch() {
   liveSearch('');
 
   box.focus();
+
+}
+async function submitSearch() {
+
+  const box = document.getElementById('searchBox');
+  const q = box.value.trim();
+
+  if (!q) return;
+
+  clearTimeout(searchTimer);
+
+  const requestId = ++searchRequestId;
+
+  try {
+
+    const res = await api(
+      `/api/expenses?q=${encodeURIComponent(q)}`
+    );
+
+    if (
+      requestId !== searchRequestId ||
+      q !== box.value.trim()
+    ) {
+      return;
+    }
+
+    if (!Array.isArray(res)) return;
+
+    activeSearchTerm = q;
+
+    renderExpenseTable(res.slice(0, 15));
+
+    setTimeout(() => {
+
+      if (requestId !== searchRequestId) return;
+
+      const firstRow = document.querySelector(
+        '#expTable .search-result-row'
+      );
+
+      if (firstRow) {
+
+        firstRow.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
+      }
+
+    }, 100);
+
+  } catch(error) {
+
+    console.error('Search submit error:', error);
+
+  }
 
 }
 
@@ -1843,6 +1929,17 @@ function clearSearch() {
   ) {
 
     clearSearch();
+
+  }
+
+});
+  document.getElementById('searchBox').addEventListener('keydown', function(e) {
+
+  if (e.key === 'Enter') {
+
+    e.preventDefault();
+
+    submitSearch();
 
   }
 
