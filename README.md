@@ -40,7 +40,7 @@ Live Application: https://fintrack-production-9afa8444.up.railway.app
 
 📁 Project Structure
 
-SmartExpenseTracker/
+FinTrack/
 ├── Dockerfile
 ├── pom.xml
 ├── sql/
@@ -72,7 +72,7 @@ Prerequisites
 Step 1 – Clone Repository
 
 git clone https://github.com/procoder641/FinTrack.git
-cd SmartExpenseTracker
+cd FinTrack
 
 Step 2 – Database Setup
 
