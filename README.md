@@ -70,7 +70,7 @@ Prerequisites
 
 Step 1 – Clone Repository
 
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/procoder641/FinTrack.git
 cd SmartExpenseTracker
 
 Step 2 – Database Setup
